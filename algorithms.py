@@ -39,10 +39,10 @@ def lstm_model(filepath):
     X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
 
     model = Sequential()
-    model.add(LSTM(100, input_shape=(
+    model.add(LSTM(30, input_shape=(
         X_train.shape[1], X_train.shape[2]), return_sequences=True))
-    model.add(LSTM(50, return_sequences=False))
-    model.add(Dense(50))
+    model.add(LSTM(5, return_sequences=False))
+    model.add(Dense(5))
     model.add(Dense(1))
     model.compile(loss='mean_squared_error', optimizer='adam')
     model.fit(X_train, y_train, epochs=50, batch_size=1, verbose=0)
