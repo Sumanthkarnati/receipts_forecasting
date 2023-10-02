@@ -99,6 +99,7 @@ def main():
                 'M', on='Date').sum().reset_index()
 
             st.subheader("Monthly Predictions")
+            st.dataframe(future_df_monthly)
 
             csv = future_df.to_csv(index=False)
             b64 = base64.b64encode(csv.encode()).decode()
@@ -154,6 +155,8 @@ def main():
                     'M', on='Date').sum().reset_index()
 
                 st.subheader("Monthly Predictions")
+
+                st.dataframe(future_df_monthly)
 
                 csv = future_df.to_csv(index=False)
                 b64 = base64.b64encode(csv.encode()).decode()
