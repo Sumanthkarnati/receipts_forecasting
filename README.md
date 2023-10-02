@@ -4,6 +4,8 @@
 # Overview
 -- Receipts Forecasting is an application designed to predict future receipts using various forecasting models. It offers insights through data exploration and renders the model's predictions, allowing users to evaluate and compare the performance of different models.
 
+## Live Application: The application is live and can be accessed https://receipts-forecasting.streamlit.app/
+
 # Features
 Data Exploration: Visualize and explore the dataset used for training the models.
 Model Predictions: Evaluate the performance of different forecasting models and compare their predictions.
