@@ -15,8 +15,8 @@ import joblib
 
 def load_and_preprocess_data(filepath):
     data = pd.read_csv(filepath)
-    data['# Date'] = pd.to_datetime(data['# Date'])
-    data.set_index('# Date', inplace=True)
+    data['Date'] = pd.to_datetime(data['Date'])
+    data.set_index('Date', inplace=True)
     return data  # return daily data
 
 
@@ -27,8 +27,8 @@ def lstm_model(filepath):
     train, test = data[:train_size], data[train_size:]
 
     scaler = MinMaxScaler(feature_range=(0, 1))
-    scaled_train = scaler.fit_transform(train)
-    scaled_test = scaler.transform(test)
+    scaled_train = scaler.fit_transform(train[['Receipt_Count']])
+    scaled_test = scaler.transform(test[['Receipt_Count']])
     joblib.dump(scaler, 'lstm_scaler.pkl')
 
     X_train, y_train = [], []
@@ -51,16 +51,18 @@ def lstm_model(filepath):
     test_predictions = []
     first_eval_batch = scaled_train[-1:]
     current_batch = first_eval_batch.reshape((1, 1, 1))
-    
+
     for i in range(len(test)):
         current_pred = model.predict(current_batch)[0]
         test_predictions.append(current_pred)
-        current_batch = np.append(current_batch[:, 1:, :], [[current_pred]], axis=1)
-    
-    true_predictions = scaler.inverse_transform(np.array(test_predictions).reshape(-1, 1))
-    
-    mae = mean_absolute_error(test, true_predictions)
-    rmse = np.sqrt(mean_squared_error(test, true_predictions))
+        current_batch = np.append(current_batch[:, 1:, :], [
+                                  [current_pred]], axis=1)
+
+    true_predictions = scaler.inverse_transform(
+        np.array(test_predictions).reshape(-1, 1))
+
+    mae = mean_absolute_error(test['Receipt_Count'], true_predictions)
+    rmse = np.sqrt(mean_squared_error(test['Receipt_Count'], true_predictions))
 
     # Save the scaler, MAE, and RMSE
     joblib.dump(mae, 'lstm_mae.pkl')
@@ -98,8 +100,10 @@ def gradient_boosting_model(filepath):
 
     predictions = model.predict(X_test)
 
-    mae = mean_absolute_error(test.loc[X_test.index], predictions)
-    rmse = np.sqrt(mean_squared_error(test.loc[X_test.index], predictions))
+    actuals = test.loc[X_test.index, 'Receipt_Count']
+    mae = mean_absolute_error(actuals, predictions)
+    rmse = np.sqrt(mean_squared_error(actuals, predictions))
+
     return mae, rmse, model
 
 
@@ -114,9 +118,9 @@ def ets_model(filepath):
     fit = model.fit()
 
     predictions = fit.forecast(len(test))
+    mae = mean_absolute_error(test['Receipt_Count'], predictions)
+    rmse = np.sqrt(mean_squared_error(test['Receipt_Count'], predictions))
 
-    mae = mean_absolute_error(test, predictions)
-    rmse = np.sqrt(mean_squared_error(test, predictions))
     return mae, rmse, fit
 
 
