@@ -7,6 +7,8 @@ from sklearn.preprocessing import MinMaxScaler
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
 from keras.models import Sequential
 from keras.layers import LSTM, Dense
+from keras.layers import Dropout
+from keras.callbacks import EarlyStopping
 import matplotlib.pyplot as plt
 import joblib
 
@@ -39,13 +41,19 @@ def lstm_model(filepath):
     X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
 
     model = Sequential()
-    model.add(LSTM(30, input_shape=(
+    model.add(LSTM(10, input_shape=(
         X_train.shape[1], X_train.shape[2]), return_sequences=True))
+    model.add(Dropout(0.2))
     model.add(LSTM(5, return_sequences=False))
+    model.add(Dropout(0.2))
     model.add(Dense(5))
     model.add(Dense(1))
     model.compile(loss='mean_squared_error', optimizer='adam')
-    model.fit(X_train, y_train, epochs=50, batch_size=1, verbose=0)
+
+    early_stop = EarlyStopping(monitor='val_loss', patience=5)
+
+    model.fit(X_train, y_train, epochs=50, batch_size=1, verbose=0,
+              validation_split=0.1, callbacks=[early_stop])
     model.save("lstm_model.h5")
 
     test_predictions = []
