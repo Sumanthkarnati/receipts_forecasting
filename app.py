@@ -29,6 +29,35 @@ def main():
         st.header("Welcome to Receipts Forecasting App!")
         st.write("Navigate to different pages using the sidebar.")
 
+        st.subheader("About the Models")
+        st.write("""
+        - **LSTM Model:** 
+            * Type: Recurrent Neural Network.
+            * Suitable For: Time series forecasting, especially when order dependence in the sequence is crucial.
+            * How it Works: Capable of learning long-term dependencies using mechanisms called gates, allowing it to remember or forget information over long sequences.
+            * [Learn More](https://en.wikipedia.org/wiki/Long_short-term_memory)
+            
+        - **Gradient Boosting Model:** 
+            * Type: Ensemble Learning Method.
+            * Suitable For: Regression and classification problems.
+            * How it Works: Builds trees one at a time; each tree helps to correct the mistakes of the previous ones.
+            * [Learn More](https://en.wikipedia.org/wiki/Gradient_boosting)
+            
+        - **ETS Model:** 
+            * Type: Exponential Smoothing State Space Model.
+            * Suitable For: Univariate time series forecasting.
+            * How it Works: Uses weighted averages of past observations with an exponentially decreasing weight to make forecasts.
+            * [Learn More](https://otexts.com/fpp2/ets.html)
+        """)
+
+        st.subheader("Future Work")
+        st.write("""
+        - Refine existing models for enhanced prediction accuracy.
+        - Incorporate advanced models like PatchTST from the research paper "A Time Series is Worth 64 Words: Long-term Forecasting with Transformers."
+        - Expand the dataset for improved model training and reliability.
+        - Enable user interaction and feedback to understand user requirements and improve model performance.
+        """)
+
     elif page == "Data Exploration":
         st.header("Data Exploration")
         data = load_data('data_daily.csv')
