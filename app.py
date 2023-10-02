@@ -93,36 +93,46 @@ def main():
             future_df = pd.read_csv('predictions_2022.csv')
             st.dataframe(future_df)
 
+            # Monthly Predictions
+            future_df['Date'] = pd.to_datetime(future_df['Date'])
+            future_df_monthly = future_df.resample(
+                'M', on='Date').sum().reset_index()
+
+            st.subheader("Monthly Predictions")
+
             csv = future_df.to_csv(index=False)
             b64 = base64.b64encode(csv.encode()).decode()
             href = f'<a href="data:file/csv;base64,{b64}" download="predictions_2022.csv">Download Predictions CSV File</a>'
             st.markdown(href, unsafe_allow_html=True)
 
-            # Load 2021 data and group by month
-            data_2021 = load_data('data_daily.csv')
-            data_2021 = data_2021[data_2021['Date'].dt.year == 2021]
-            data_2021 = data_2021.resample('M', on='Date').sum().reset_index()
-
-            # Group future predictions by month
-            future_df['Date'] = pd.to_datetime(future_df['Date'])
-            future_df_monthly = future_df.resample(
-                'M', on='Date').sum().reset_index()
+            # Plotting for yearly predictions
+            fig, ax = plt.subplots(figsize=(10, 6))
+            sns.lineplot(data=future_df, x='Date',
+                         y='LSTM_Predictions', ax=ax, label='LSTM Predictions')
+            sns.lineplot(data=future_df, x='Date', y='GB_Predictions',
+                         ax=ax, label='Gradient Boosting Predictions')
+            sns.lineplot(data=future_df, x='Date',
+                         y='ETS_Predictions', ax=ax, label='ETS Predictions')
+            plt.title('Yearly Predictions for 2022')
+            plt.ylabel('Receipt_Count')
+            plt.xlabel('Date')
+            plt.legend()
+            st.pyplot(fig)
 
             # Plotting
             fig, ax = plt.subplots(figsize=(10, 6))
-            sns.lineplot(data=data_2021, x='Date',
-                         y='Receipt_Count', ax=ax, label='Actual 2021')
             sns.lineplot(data=future_df_monthly, x='Date',
                          y='LSTM_Predictions', ax=ax, label='LSTM Predictions')
             sns.lineplot(data=future_df_monthly, x='Date', y='GB_Predictions',
                          ax=ax, label='Gradient Boosting Predictions')
             sns.lineplot(data=future_df_monthly, x='Date',
                          y='ETS_Predictions', ax=ax, label='ETS Predictions')
-            plt.title('Monthly Predictions vs Actual 2021 Data')
+            plt.title('Monthly Predictions for 2022')
             plt.ylabel('Receipt_Count')
             plt.xlabel('Month')
             plt.legend()
             st.pyplot(fig)
+
         else:
             if st.button("Run Models"):
                 dates_2022 = pd.date_range(
@@ -138,33 +148,41 @@ def main():
 
                 st.dataframe(future_df)
 
+                # Monthly Predictions
+                future_df['Date'] = pd.to_datetime(future_df['Date'])
+                future_df_monthly = future_df.resample(
+                    'M', on='Date').sum().reset_index()
+
+                st.subheader("Monthly Predictions")
+
                 csv = future_df.to_csv(index=False)
                 b64 = base64.b64encode(csv.encode()).decode()
                 href = f'<a href="data:file/csv;base64,{b64}" download="predictions_2022.csv">Download Predictions CSV File</a>'
                 st.markdown(href, unsafe_allow_html=True)
 
-                # Load 2021 data and group by month
-                data_2021 = load_data('data_daily.csv')
-                data_2021 = data_2021[data_2021['Date'].dt.year == 2021]
-                data_2021 = data_2021.resample(
-                    'M', on='Date').sum().reset_index()
-
-                # Group future predictions by month
-                future_df['Date'] = pd.to_datetime(future_df['Date'])
-                future_df_monthly = future_df.resample(
-                    'M', on='Date').sum().reset_index()
+                # Plotting for yearly predictions
+                fig, ax = plt.subplots(figsize=(10, 6))
+                sns.lineplot(data=future_df, x='Date',
+                             y='LSTM_Predictions', ax=ax, label='LSTM Predictions')
+                sns.lineplot(data=future_df, x='Date', y='GB_Predictions',
+                             ax=ax, label='Gradient Boosting Predictions')
+                sns.lineplot(data=future_df, x='Date',
+                             y='ETS_Predictions', ax=ax, label='ETS Predictions')
+                plt.title('Yearly Predictions for 2022')
+                plt.ylabel('Receipt_Count')
+                plt.xlabel('Date')
+                plt.legend()
+                st.pyplot(fig)
 
                 # Plotting
                 fig, ax = plt.subplots(figsize=(10, 6))
-                sns.lineplot(data=data_2021, x='Date',
-                             y='Receipt_Count', ax=ax, label='Actual 2021')
                 sns.lineplot(data=future_df_monthly, x='Date',
                              y='LSTM_Predictions', ax=ax, label='LSTM Predictions')
                 sns.lineplot(data=future_df_monthly, x='Date', y='GB_Predictions',
                              ax=ax, label='Gradient Boosting Predictions')
                 sns.lineplot(data=future_df_monthly, x='Date',
                              y='ETS_Predictions', ax=ax, label='ETS Predictions')
-                plt.title('Monthly Predictions vs Actual 2021 Data')
+                plt.title('Monthly Predictions for 2022')
                 plt.ylabel('Receipt_Count')
                 plt.xlabel('Month')
                 plt.legend()
